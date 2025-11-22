@@ -1,3 +1,5 @@
+'use client';
+
 import { Banknote, Building, CreditCard, Smartphone, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useCart } from '../../../context/CartContext';

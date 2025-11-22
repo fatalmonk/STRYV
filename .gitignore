@@ -25,7 +25,8 @@ build/
 .env.production.local
 
 # ---- OS & Editor ----
-.DS_Store
+__MACOSX/
+
 Thumbs.db
 *.swp
 
