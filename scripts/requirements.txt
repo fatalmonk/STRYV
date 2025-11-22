@@ -1,0 +1,6 @@
+# Image Scraper Requirements
+# Install these packages before running the script
+
+beautifulsoup4==4.12.2
+requests==2.31.0
+

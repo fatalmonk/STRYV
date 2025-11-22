@@ -1,0 +1,65 @@
+# Normalize all text files to LF line endings
+* text=auto eol=lf
+
+# Treat all images as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.webp binary
+*.ico binary
+
+# Fonts always binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+
+# Videos always binary
+*.mp4 binary
+*.mov binary
+*.avi binary
+*.webm binary
+
+# Archives & executables
+*.zip binary
+*.gz binary
+*.tar binary
+*.7z binary
+*.exe binary
+*.dll binary
+
+# Next.js build artifacts (to avoid diff noise)
+.next/**/* binary
+out/**/* binary
+
+# Prevent Git diff from choking on large/minified JS bundles
+*.min.js binary
+*.bundle.js binary
+
+# Env files should be treated as text (Git will not auto-LF them)
+*.env text
+.env text
+.env.* text
+
+# Lock files should be treated as text
+package-lock.json text
+yarn.lock text
+pnpm-lock.yaml text
+bun.lockb binary
+
+# Git should not try to merge lockfiles (they are regenerated)
+yarn.lock merge=ours
+package-lock.json merge=ours
+pnpm-lock.yaml merge=ours
+
+# Mark shell scripts as text with LF
+*.sh text eol=lf
+
+# Better diffs for TS, TSX, and JSON
+*.ts text diff=javascript
+*.tsx text diff=javascript
+*.js text diff=javascript
+*.json text
+*.md text
