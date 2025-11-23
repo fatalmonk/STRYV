@@ -28,7 +28,7 @@ function CheckoutCancelledContent() {
           </div>
         )}
         <p className="text-sm text-zinc-500">
-          If you'd like to complete your purchase, you can try again from your cart.
+          If you&apos;d like to complete your purchase, you can try again from your cart.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Link

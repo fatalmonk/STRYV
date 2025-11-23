@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface SSLCommerzReturnData {
+  status?: string;
+  tran_id?: string;
+  [key: string]: FormDataEntryValue | undefined;
+}
+
 /**
  * SSLCommerz Success Return Handler
  * User just paid → SSLCommerz redirected → confirm payload → redirect to thank-you page
@@ -7,8 +13,9 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const data: any = Object.fromEntries(formData);
+    const data = Object.fromEntries(formData) as SSLCommerzReturnData;
 
+    // eslint-disable-next-line no-console
     console.log('SUCCESS return data:', data);
 
     // Basic validation
@@ -23,6 +30,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.redirect(redirectUrl);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Success return error:', error);
     return NextResponse.redirect(new URL('/checkout/error', req.url));
   }
