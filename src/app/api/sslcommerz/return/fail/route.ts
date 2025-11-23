@@ -1,35 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-interface SSLCommerzReturnData {
-  tran_id?: string;
-  error?: string;
-  [key: string]: FormDataEntryValue | undefined;
-}
+type SSLReturnData = Record<string, string>;
 
-/**
- * SSLCommerz Fail Return Handler
- * User payment failed or was declined
- */
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
-    const data = Object.fromEntries(formData) as SSLCommerzReturnData;
+    const form = await req.formData();
+    const data: SSLReturnData = Object.fromEntries(form) as SSLReturnData;
 
-    // eslint-disable-next-line no-console
-    console.log('FAIL return data:', data);
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log('Fail return:', data);
+    }
 
-    const redirectUrl = new URL('/checkout/failed', req.url);
-    if (data.tran_id) {
-      redirectUrl.searchParams.set('tran_id', data.tran_id.toString());
-    }
-    if (data.error) {
-      redirectUrl.searchParams.set('error', data.error.toString());
-    }
-    return NextResponse.redirect(redirectUrl);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Fail return error:', error);
-    return NextResponse.redirect(new URL('/checkout/error', req.url));
+    return NextResponse.redirect('/checkout/failed');
+  } catch {
+    return NextResponse.redirect('/checkout/error');
   }
 }
 
