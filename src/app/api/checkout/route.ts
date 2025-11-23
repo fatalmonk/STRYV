@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     // Initialize SSLCommerz
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { SslCommerzPayment } = require('sslcommerz');
-    
+
     const isLive = process.env.SSLCOMMERZ_IS_LIVE === 'true';
     const sslcommerz = new SslCommerzPayment(
       process.env.SSLCOMMERZ_STORE_ID,
@@ -65,6 +65,14 @@ export async function POST(req: NextRequest) {
     const baseUrl = req.nextUrl.origin;
 
     // Prepare payment data
+    const customerName = customerInfo?.name || 'Customer';
+    const customerAddress = customerInfo?.address || 'Dhaka';
+    const customerCity = customerInfo?.city || 'Dhaka';
+    const customerPostcode = customerInfo?.postcode || '1000';
+    const customerCountry = customerInfo?.country || 'Bangladesh';
+    const customerPhone = customerInfo?.phone || '01700000000';
+    const customerEmail = customerInfo?.email || 'customer@example.com';
+
     const paymentData = {
       total_amount: totalAmount,
       currency: 'BDT',
@@ -74,18 +82,26 @@ export async function POST(req: NextRequest) {
       cancel_url: `${baseUrl}${process.env.SSLCOMMERZ_CANCEL_URL}`,
       ipn_url: `${baseUrl}/api/payment/ipn`,
       shipping_method: 'Courier',
-      product_name: cartItems.length === 1 
-        ? cartItems[0].name 
+      product_name: cartItems.length === 1
+        ? cartItems[0].name
         : `${cartItems.length} Items`,
       product_category: 'General',
       product_profile: 'general',
-      cus_name: customerInfo?.name || 'Customer',
-      cus_email: customerInfo?.email || 'customer@example.com',
-      cus_add1: customerInfo?.address || 'Dhaka',
-      cus_city: customerInfo?.city || 'Dhaka',
-      cus_postcode: customerInfo?.postcode || '1000',
-      cus_country: customerInfo?.country || 'Bangladesh',
-      cus_phone: customerInfo?.phone || '01700000000',
+      // Customer information
+      cus_name: customerName,
+      cus_email: customerEmail,
+      cus_add1: customerAddress,
+      cus_city: customerCity,
+      cus_postcode: customerPostcode,
+      cus_country: customerCountry,
+      cus_phone: customerPhone,
+      // Shipping information (required by SSLCommerz)
+      ship_name: customerName,
+      ship_add1: customerAddress,
+      ship_city: customerCity,
+      ship_postcode: customerPostcode,
+      ship_country: customerCountry,
+      ship_phone: customerPhone,
       // Additional metadata
       value_a: JSON.stringify(cartItems.map((item: CartItem) => ({
         id: item.id,
@@ -98,16 +114,34 @@ export async function POST(req: NextRequest) {
     // Initiate payment
     const response = await sslcommerz.init(paymentData);
 
-    if (response.status === 'SUCCESS' && response.GatewayPageURL) {
+    // Log response for debugging (remove sensitive data in production)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('SSLCommerz response:', JSON.stringify(response, null, 2));
+    }
+
+    if (response && response.status === 'SUCCESS' && response.GatewayPageURL) {
       return NextResponse.json({
         ok: true,
         url: response.GatewayPageURL,
         sessionId: tranId,
       });
     } else {
-      console.error('SSLCommerz initiation failed:', response);
+      // Provide more detailed error information
+      const errorMessage = response?.failedreason || response?.error || 'Failed to initiate payment';
+      const errorDetails = {
+        status: response?.status,
+        message: errorMessage,
+        response: process.env.NODE_ENV !== 'production' ? response : undefined,
+      };
+
+      console.error('SSLCommerz initiation failed:', errorDetails);
+
       return NextResponse.json(
-        { ok: false, error: 'Failed to initiate payment' },
+        {
+          ok: false,
+          error: errorMessage,
+          details: process.env.NODE_ENV !== 'production' ? errorDetails : undefined,
+        },
         { status: 500 }
       );
     }
