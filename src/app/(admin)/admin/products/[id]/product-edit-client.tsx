@@ -37,9 +37,11 @@ export default function ProductEditClient({ product }: ProductEditClientProps) {
       name: formData.name,
       price: parseFloat(formData.price) || 0,
       category: formData.category,
-      image: formData.image
+      image: formData.image,
+      sizes: product.sizes || []
     };
 
+    // eslint-disable-next-line no-console
     console.log('Updated Product:', updatedProduct);
 
     // Simulate API call delay

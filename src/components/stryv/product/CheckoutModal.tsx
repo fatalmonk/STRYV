@@ -1,6 +1,7 @@
 'use client';
 
 import { Banknote, Building, CreditCard, Smartphone, X } from 'lucide-react';
+import Image from 'next/image';
 import React, { useState } from 'react';
 import { useCart } from '../../../context/CartContext';
 import { beginCheckout } from '@/lib/commerce/checkout';
@@ -77,30 +78,30 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
                                     <h3 className="font-bold text-black uppercase text-xs tracking-widest">Shipping Details</h3>
-                                    <input 
-                                        type="text" 
-                                        placeholder="Full Name" 
+                                    <input
+                                        type="text"
+                                        placeholder="Full Name"
                                         value={customerInfo.name}
                                         onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" 
+                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition"
                                     />
-                                    <input 
-                                        type="email" 
-                                        placeholder="Email Address" 
+                                    <input
+                                        type="email"
+                                        placeholder="Email Address"
                                         value={customerInfo.email}
                                         onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" 
+                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition"
                                     />
-                                    <input 
-                                        type="tel" 
-                                        placeholder="Phone Number" 
+                                    <input
+                                        type="tel"
+                                        placeholder="Phone Number"
                                         value={customerInfo.phone}
                                         onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" 
+                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition"
                                     />
-                                    <textarea 
-                                        placeholder="Address" 
-                                        rows={3} 
+                                    <textarea
+                                        placeholder="Address"
+                                        rows={3}
                                         value={customerInfo.address}
                                         onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
                                         className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition"
@@ -178,9 +179,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                                             title="SSLCommerz"
                                             className="inline-block"
                                         >
-                                            <img
+                                            <Image
                                                 src="https://securepay.sslcommerz.com/public/image/SSLCommerz-Pay-With-logo-All-Size-05.png"
                                                 alt="SSLCommerz"
+                                                width={300}
+                                                height={60}
                                                 className="h-auto max-w-[200px] opacity-60 hover:opacity-100 transition-opacity"
                                             />
                                         </a>

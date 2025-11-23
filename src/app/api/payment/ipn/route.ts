@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import SSLCommerzPayment from 'sslcommerz';
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const SSLCommerzPayment = require('sslcommerz');
 
 /**
  * IPN (Instant Payment Notification) handler for SSLCommerz
@@ -52,6 +54,7 @@ export async function POST(req: NextRequest) {
       // Handle payment status
       if (status === 'VALID' || status === 'VALIDATED') {
         // Payment successful - update order status in your database
+        // eslint-disable-next-line no-console
         console.log('Payment successful:', { tranId, amount, cartItems });
         
         // TODO: Update your database with successful payment
@@ -60,6 +63,7 @@ export async function POST(req: NextRequest) {
         // await sendConfirmationEmail(customerEmail, orderDetails);
       } else if (status === 'FAILED' || status === 'CANCELLED') {
         // Payment failed or cancelled
+        // eslint-disable-next-line no-console
         console.log('Payment failed/cancelled:', { tranId, status });
         
         // TODO: Update your database with failed payment

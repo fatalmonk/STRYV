@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import SSLCommerzPayment from 'sslcommerz';
 import type { CartItem } from '@/lib/stryv/types';
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const SSLCommerzPayment = require('sslcommerz');
 
 export async function POST(req: NextRequest) {
   try {

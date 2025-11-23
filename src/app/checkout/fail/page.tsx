@@ -3,8 +3,9 @@
 import { XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function CheckoutFailPage() {
+function CheckoutFailContent() {
   const searchParams = useSearchParams();
   const tranId = searchParams.get('tran_id');
   const errorMsg = searchParams.get('error');
@@ -48,6 +49,20 @@ export default function CheckoutFailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutFailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center px-4 bg-zinc-50">
+        <div className="text-center">
+          <p className="text-zinc-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <CheckoutFailContent />
+    </Suspense>
   );
 }
 

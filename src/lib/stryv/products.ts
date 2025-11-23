@@ -22,7 +22,7 @@ export const vintageCollection: Product[] = [
   },
   {
     id: 'v3',
-    name: "United Treble \'99",
+    name: "United Treble '99",
     category: 'Premier Kings',
     price: 3800,
     image: '/images/product_3.jpg',

@@ -15,7 +15,7 @@ interface ProductCardProps {
   variant?: 'default' | 'compact';
 }
 
-const ProductCard = ({ product, index, onAddToCart, variant = 'default' }: ProductCardProps) => {
+const ProductCard = ({ product, index, onAddToCart: _onAddToCart, variant = 'default' }: ProductCardProps) => {
   const isCompact = variant === 'compact';
   const router = useRouter();
   const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();

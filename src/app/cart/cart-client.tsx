@@ -3,12 +3,10 @@
 import { Minus, Plus, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 
 export default function CartClient() {
   const { items, updateQuantity, cartTotal, removeFromCart } = useCart();
-  const router = useRouter();
 
   const handleCheckout = async () => {
     try {
@@ -125,6 +123,23 @@ export default function CartClient() {
           >
             Checkout
           </button>
+        </div>
+        <div className="flex justify-center pt-2">
+          <a
+            href="https://www.sslcommerz.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="SSLCommerz"
+            className="inline-block"
+          >
+            <Image
+              src="https://securepay.sslcommerz.com/public/image/SSLCommerz-Pay-With-logo-All-Size-05.png"
+              alt="SSLCommerz"
+              width={300}
+              height={60}
+              className="h-auto max-w-[200px] opacity-60 hover:opacity-100 transition-opacity"
+            />
+          </a>
         </div>
       </div>
     </div>
