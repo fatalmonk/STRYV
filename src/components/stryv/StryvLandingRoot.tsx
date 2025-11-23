@@ -2,7 +2,7 @@
 
 import { ReactLenis } from '@studio-freight/react-lenis';
 import { useState } from 'react';
-import { CartProvider, useCart } from '../../context/CartContext';
+import { useCart } from '../../context/CartContext';
 import { momentsCollection, vintageCollection } from '../../lib/stryv/products';
 import { testimonials } from '../../lib/stryv/testimonials';
 
@@ -60,11 +60,7 @@ const LandingContent = () => {
 };
 
 const StryvLandingRoot = () => {
-    return (
-        <CartProvider>
-            <LandingContent />
-        </CartProvider>
-    );
+    return <LandingContent />;
 };
 
 export default StryvLandingRoot;

@@ -52,8 +52,8 @@ const CartDrawer = ({ onCheckout }: CartDrawerProps) => {
               </button>
             </div>
           ) : (
-            items.map(item => (
-              <div key={item.id} className="flex gap-4">
+            items.map((item, index) => (
+              <div key={`${item.id}-${item.selectedSize || 'default'}-${index}`} className="flex gap-4">
                 <div className="w-20 h-24 bg-zinc-100 rounded-sm overflow-hidden flex-shrink-0 relative">
                   <Image
                     src={item.image}
@@ -67,11 +67,14 @@ const CartDrawer = ({ onCheckout }: CartDrawerProps) => {
                   <div>
                     <h3 className="font-bold text-sm uppercase tracking-tight">{item.name}</h3>
                     <p className="text-xs text-zinc-500">{item.category}</p>
+                    {item.selectedSize && (
+                      <p className="text-xs text-zinc-600 mt-1">Size: {item.selectedSize}</p>
+                    )}
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 border border-zinc-200 rounded-sm px-2 py-1">
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedSize)}
                         className="p-1 hover:text-black text-zinc-400 transition"
                         aria-label={`Decrease quantity of ${item.name}`}
                       >
@@ -79,7 +82,7 @@ const CartDrawer = ({ onCheckout }: CartDrawerProps) => {
                       </button>
                       <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize)}
                         className="p-1 hover:text-black text-zinc-400 transition"
                         aria-label={`Increase quantity of ${item.name}`}
                       >

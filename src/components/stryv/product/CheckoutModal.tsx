@@ -3,6 +3,7 @@
 import { Banknote, Building, CreditCard, Smartphone, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useCart } from '../../../context/CartContext';
+import { beginCheckout } from '@/lib/commerce/checkout';
 
 interface CheckoutModalProps {
     isOpen: boolean;
@@ -10,18 +11,52 @@ interface CheckoutModalProps {
 }
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
-    const { cartTotal, clearCart } = useCart();
+    const { cartTotal, clearCart, items } = useCart();
     const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
     const [paymentMethod, setPaymentMethod] = useState<string>('');
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [customerInfo, setCustomerInfo] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: 'Dhaka',
+        postcode: '1000',
+        country: 'Bangladesh',
+    });
 
     if (!isOpen) return null;
 
-    const handlePayment = () => {
-        // Simulate processing
-        setTimeout(() => {
-            setStep('success');
-            clearCart();
-        }, 1500);
+    const handlePayment = async () => {
+        if (paymentMethod === 'card') {
+            // Handle SSLCommerz checkout
+            setIsProcessing(true);
+            setError(null);
+            try {
+                await beginCheckout(items, customerInfo);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Failed to initiate checkout');
+                setIsProcessing(false);
+            }
+        } else {
+            // Simulate processing for other payment methods
+            setTimeout(() => {
+                setStep('success');
+                clearCart();
+            }, 1500);
+        }
+    };
+
+    const handleSSLCommerzCheckout = async () => {
+        setIsProcessing(true);
+        setError(null);
+        try {
+            await beginCheckout(items, customerInfo);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to initiate checkout');
+            setIsProcessing(false);
+        }
     };
 
     return (
@@ -42,10 +77,34 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div className="space-y-4">
                                     <h3 className="font-bold text-black uppercase text-xs tracking-widest">Shipping Details</h3>
-                                    <input type="text" placeholder="Full Name" className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" />
-                                    <input type="email" placeholder="Email Address" className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" />
-                                    <input type="tel" placeholder="Phone Number" className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" />
-                                    <textarea placeholder="Address" rows={3} className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition"></textarea>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Full Name" 
+                                        value={customerInfo.name}
+                                        onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" 
+                                    />
+                                    <input 
+                                        type="email" 
+                                        placeholder="Email Address" 
+                                        value={customerInfo.email}
+                                        onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" 
+                                    />
+                                    <input 
+                                        type="tel" 
+                                        placeholder="Phone Number" 
+                                        value={customerInfo.phone}
+                                        onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition" 
+                                    />
+                                    <textarea 
+                                        placeholder="Address" 
+                                        rows={3} 
+                                        value={customerInfo.address}
+                                        onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
+                                        className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-sm focus:border-black outline-none transition"
+                                    ></textarea>
                                 </div>
                                 <div className="space-y-4">
                                     <h3 className="font-bold text-black uppercase text-xs tracking-widest">Order Summary</h3>
@@ -100,18 +159,34 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                             </div>
 
                             {paymentMethod === 'card' && (
-                                <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-sm text-sm text-zinc-500 flex gap-2 justify-center">
-                                    <span>VISA</span> • <span>Mastercard</span> • <span>AMEX</span>
-                                </div>
+                                <>
+                                    <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-sm text-sm text-zinc-500 flex gap-2 justify-center">
+                                        <span>VISA</span> • <span>Mastercard</span> • <span>AMEX</span>
+                                    </div>
+                                    <button
+                                        onClick={handleSSLCommerzCheckout}
+                                        disabled={isProcessing || items.length === 0}
+                                        className="w-full bg-black text-white font-bold uppercase py-4 hover:bg-zinc-800 transition disabled:opacity-50 disabled:cursor-not-allowed tracking-widest"
+                                    >
+                                        {isProcessing ? 'Processing...' : 'Proceed to Secure Checkout'}
+                                    </button>
+                                    {error && (
+                                        <div className="p-3 bg-red-50 border border-red-200 rounded-sm text-sm text-red-600">
+                                            {error}
+                                        </div>
+                                    )}
+                                </>
                             )}
 
-                            <button
-                                onClick={handlePayment}
-                                disabled={!paymentMethod}
-                                className="w-full bg-black text-white font-bold uppercase py-4 hover:bg-zinc-800 transition disabled:opacity-50 disabled:cursor-not-allowed tracking-widest"
-                            >
-                                Complete Order (৳{(cartTotal + 120).toLocaleString()})
-                            </button>
+                            {paymentMethod !== 'card' && (
+                                <button
+                                    onClick={handlePayment}
+                                    disabled={!paymentMethod || isProcessing}
+                                    className="w-full bg-black text-white font-bold uppercase py-4 hover:bg-zinc-800 transition disabled:opacity-50 disabled:cursor-not-allowed tracking-widest"
+                                >
+                                    Complete Order (৳{(cartTotal + 120).toLocaleString()})
+                                </button>
+                            )}
                         </div>
                     )}
 

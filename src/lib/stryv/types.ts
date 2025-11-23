@@ -6,10 +6,13 @@ export interface Product {
   category: string;
   price: number;
   image: string;
+  sizes: string[];
+  defaultSize?: string;
 }
 
 export interface CartItem extends Product {
   quantity: number;
+  selectedSize?: string;
 }
 
 export interface Testimonial {
