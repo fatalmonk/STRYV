@@ -170,6 +170,21 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose }) => {
                                     >
                                         {isProcessing ? 'Processing...' : 'Proceed to Secure Checkout'}
                                     </button>
+                                    <div className="flex justify-center pt-2">
+                                        <a
+                                            href="https://www.sslcommerz.com/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            title="SSLCommerz"
+                                            className="inline-block"
+                                        >
+                                            <img
+                                                src="https://securepay.sslcommerz.com/public/image/SSLCommerz-Pay-With-logo-All-Size-05.png"
+                                                alt="SSLCommerz"
+                                                className="h-auto max-w-[200px] opacity-60 hover:opacity-100 transition-opacity"
+                                            />
+                                        </a>
+                                    </div>
                                     {error && (
                                         <div className="p-3 bg-red-50 border border-red-200 rounded-sm text-sm text-red-600">
                                             {error}
