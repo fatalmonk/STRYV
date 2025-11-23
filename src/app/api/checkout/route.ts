@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { CartItem } from '@/lib/stryv/types';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const SSLCommerzPayment = require('sslcommerz');
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -54,8 +51,11 @@ export async function POST(req: NextRequest) {
     const tranId = `TXN${Date.now()}${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
 
     // Initialize SSLCommerz
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { SslCommerzPayment } = require('sslcommerz');
+    
     const isLive = process.env.SSLCOMMERZ_IS_LIVE === 'true';
-    const sslcommerz = new SSLCommerzPayment(
+    const sslcommerz = new SslCommerzPayment(
       process.env.SSLCOMMERZ_STORE_ID,
       process.env.SSLCOMMERZ_STORE_PASSWORD,
       isLive

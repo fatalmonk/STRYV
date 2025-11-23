@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const SSLCommerzPayment = require('sslcommerz');
-
 /**
  * IPN (Instant Payment Notification) handler for SSLCommerz
  * This endpoint receives payment status updates from SSLCommerz
@@ -26,8 +23,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Initialize SSLCommerz
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { SslCommerzPayment } = require('sslcommerz');
+    
     const isLive = process.env.SSLCOMMERZ_IS_LIVE === 'true';
-    const sslcommerz = new SSLCommerzPayment(
+    const sslcommerz = new SslCommerzPayment(
       process.env.SSLCOMMERZ_STORE_ID,
       process.env.SSLCOMMERZ_STORE_PASSWORD,
       isLive
