@@ -11,11 +11,11 @@ import type { Product } from '../../../lib/stryv/types';
 interface ProductCardProps {
   product: Product;
   index: number;
-  onAddToCart: (product: Product) => void;
+  onAddToCart: (product: Product & { size?: string }) => void;
   variant?: 'default' | 'compact';
 }
 
-const ProductCard = ({ product, index, onAddToCart: _onAddToCart, variant = 'default' }: ProductCardProps) => {
+const ProductCard = ({ product, index, onAddToCart, variant = 'default' }: ProductCardProps) => {
   const isCompact = variant === 'compact';
   const router = useRouter();
   const { isWishlisted, addToWishlist, removeFromWishlist } = useWishlist();
@@ -34,6 +34,15 @@ const ProductCard = ({ product, index, onAddToCart: _onAddToCart, variant = 'def
     }
   };
 
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    const productWithSize = {
+      ...product,
+      size: product.defaultSize || (product.sizes && product.sizes.length > 0 ? product.sizes[0] : undefined)
+    };
+    onAddToCart(productWithSize);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -42,7 +51,7 @@ const ProductCard = ({ product, index, onAddToCart: _onAddToCart, variant = 'def
       viewport={{ once: true }}
       className="group cursor-pointer"
     >
-      <div 
+      <div
         className={`relative ${isCompact ? 'aspect-[4/5]' : 'aspect-[4/5]'} bg-zinc-100 mb-6 overflow-hidden`}
         onClick={handleCardClick}
       >
@@ -64,13 +73,20 @@ const ProductCard = ({ product, index, onAddToCart: _onAddToCart, variant = 'def
             }`}
           />
         </button>
-        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition duration-300">
+        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition duration-300 space-y-2">
+          <button
+            onClick={handleAddToCart}
+            className="w-full bg-black text-white py-3 font-bold uppercase text-xs tracking-widest hover:bg-zinc-800 transition"
+            aria-label={`Add ${product.name} to cart`}
+          >
+            Add to Cart
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleCardClick();
             }}
-            className="w-full bg-black text-white py-3 font-bold uppercase text-xs tracking-widest hover:bg-zinc-800 transition"
+            className="w-full bg-white text-black py-3 font-bold uppercase text-xs tracking-widest hover:bg-zinc-100 transition border border-black"
             aria-label={`View ${product.name}`}
           >
             View Product

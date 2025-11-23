@@ -33,13 +33,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!process.env.SSLCOMMERZ_SUCCESS_URL || !process.env.SSLCOMMERZ_FAIL_URL || !process.env.SSLCOMMERZ_CANCEL_URL) {
-      console.error('SSLCommerz URLs are not set');
-      return NextResponse.json(
-        { ok: false, error: 'SSLCommerz configuration error' },
-        { status: 500 }
-      );
-    }
+    // Note: Return URLs are now hardcoded to API routes that handle POST requests
+    // and redirect to the appropriate pages. This is required because SSLCommerz
+    // sends POST requests with form data to return URLs.
 
     // Calculate total amount
     const totalAmount = cartItems.reduce(
@@ -77,9 +73,10 @@ export async function POST(req: NextRequest) {
       total_amount: totalAmount,
       currency: 'BDT',
       tran_id: tranId,
-      success_url: `${baseUrl}${process.env.SSLCOMMERZ_SUCCESS_URL}`,
-      fail_url: `${baseUrl}${process.env.SSLCOMMERZ_FAIL_URL}`,
-      cancel_url: `${baseUrl}${process.env.SSLCOMMERZ_CANCEL_URL}`,
+      // SSLCommerz sends POST requests, so we need to use API routes that handle POST and redirect
+      success_url: `${baseUrl}/api/sslcommerz/return/success`,
+      fail_url: `${baseUrl}/api/sslcommerz/return/fail`,
+      cancel_url: `${baseUrl}/api/sslcommerz/return/cancel`,
       ipn_url: `${baseUrl}/api/payment/ipn`,
       shipping_method: 'Courier',
       product_name: cartItems.length === 1
@@ -113,11 +110,6 @@ export async function POST(req: NextRequest) {
 
     // Initiate payment
     const response = await sslcommerz.init(paymentData);
-
-    // Log response for debugging (remove sensitive data in production)
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('SSLCommerz response:', JSON.stringify(response, null, 2));
-    }
 
     if (response && response.status === 'SUCCESS' && response.GatewayPageURL) {
       return NextResponse.json({
